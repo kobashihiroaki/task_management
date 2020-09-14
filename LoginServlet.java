@@ -27,15 +27,17 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String id = request.getParameter("login-id");
-		String password = request.getParameter("login-password");
+		String login_id = request.getParameter("login-id");
+		String login_password = request.getParameter("login-password");
 		//IDとパスワードが合っていればメイン画面に遷移
-		if (id.equals("kobashi") && password.equals("hogehoge")) {
+		UserDAO udao = new UserDAO();
+		UserDTO udto = udao.selectUser(login_id, login_password);
+		if (udto.getLogin_id() != null) {
 			//セッション情報作成
-			HttpSession session = request.getSession(true);
+			HttpSession session = request.getSession();
 			//セッションオブジェクトに保存
-			session.setAttribute("loginId", "kobashi");
-			response.sendRedirect("main.jsp");
+			session.setAttribute("user_data", udto);
+			response.sendRedirect("main");
 		//間違っていればログイン画面に遷移
 		} else {
 			response.sendRedirect("login");

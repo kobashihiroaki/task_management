@@ -19,7 +19,7 @@ public class MainServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
+		doPost(request, response);
 	}
 
 	/**
@@ -27,15 +27,16 @@ public class MainServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		HttpSession session = request.getSession(false);
+		HttpSession session = request.getSession();
+		UserDTO userSession = (UserDTO) session.getAttribute("user_data");
 		//セッションオブジェクトの獲得確認
-	    if (session == null || session.getAttribute("loginId") == null) {
-	      //セッションが取得できなければログイン画面に遷移
-	    	response.sendRedirect("login");
+	    if (userSession != null) {
+	    	//セッションが取得できたらメイン画面に遷移
+	    	response.sendRedirect("main.jsp");
 	    } else {
-	      //セッションが取得できた場合はカウンタを取り出す
-//	      String loginId = (String) session.getAttribute("loginId");
-	      response.sendRedirect("main.jsp");
+	      //セッションが取得できなければログイン画面に遷移
+//	      String login_id = userSession.getLogin_id();
+	      response.sendRedirect("login");
 	    }
 	}
 
