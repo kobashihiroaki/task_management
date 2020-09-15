@@ -3,6 +3,7 @@ package task_management;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -22,55 +23,37 @@ public class LoginServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.sendRedirect("login.jsp");
-	}
+//	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		// TODO Auto-generated method stub
+////		response.sendRedirect("login.jsp");
+//	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		// 送信されたJSONの取得
+		//送信されたJSONの取得
 		BufferedReader buffer = new BufferedReader(request.getReader());
 		String reqJson = buffer.readLine();
 
 		// JSONをオブジェクトに変更
-//		JSONObject obj = new JSONObject(reqJson);
-//
-//        Map<String, String> map = new HashMap<>();
-//        for(Object key : obj.keySet()) {
-//            map.put((String) key, obj.get((String) key));
-//        }
 		ObjectMapper mapper = new ObjectMapper();
-		Map<String, String> reqMap =
-			mapper.readValue(reqJson, new TypeReference<Map<String, String>>() {});
+		Map<String, String> reqMap = mapper.readValue(reqJson, new TypeReference<Map<String, String>>() {});
+		Map<String, Object> resMap = new HashMap<>();
 
-        String login_id = reqMap.get("login_id");
-		String login_password = reqMap.get("login_password");
-		//IDとパスワードが合っていればメイン画面に遷移
+//		resMap.put("login_id", "kobashi");
+//		resMap.put("login_password", "hogehoge");
+		resMap.put("login_id", reqMap.get("login_id"));
+		resMap.put("login_password", reqMap.get("login_password"));
+
+		// オブジェクトをJson文字列に変更
+		String json = mapper.writeValueAsString(resMap);
 		response.setContentType("application/json; charset=utf-8");
 		request.setCharacterEncoding("utf-8");
-		UserDAO udao = new UserDAO();
-        PrintWriter out = response.getWriter();
-        out.print(udao.existsUser(login_id, login_password));
-        out.flush();
 
-//		String login_id = request.getParameter("login-id");
-//		String login_password = request.getParameter("login-password");
-//		//IDとパスワードが合っていればメイン画面に遷移
-//		UserDAO udao = new UserDAO();
-//		UserDTO udto = udao.selectUser(login_id, login_password);
-//		if (udto.getLogin_id() != null) {
-//			//セッション情報作成
-//			HttpSession session = request.getSession();
-//			//セッションオブジェクトに保存
-//			session.setAttribute("user_data", udto);
-//			response.sendRedirect("main");
-//		//間違っていればログイン画面に遷移
-//		} else {
-//			response.sendRedirect("login");
-//		}
+        PrintWriter out = response.getWriter();
+        out.print(json);
+//        out.flush();
 	}
 }
