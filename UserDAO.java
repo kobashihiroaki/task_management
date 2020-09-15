@@ -45,6 +45,53 @@ public class UserDAO {
 		return udto;
 	}
 
+	public String existsUser(String login_id, String login_password) {
+		String sql = "SELECT id, login_id from users where login_id = '" + login_id + "' and login_password = '" + login_password + "'";
+		Connection con = null;
+		Statement smt = null;
+		ResultSet rs = null;
+		UserDTO udto = new UserDTO();
+		try {
+			con = ConnectionManager.getConnection();
+			smt = con.createStatement();
+			rs = smt.executeQuery(sql);
+			while (rs.next()) {
+				udto.setId(rs.getInt("id"));
+				udto.setLogin_id(rs.getString("login_id"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception ignore) {
+				}
+			}
+			if (smt != null) {
+				try {
+					smt.close();
+				} catch (Exception ignore) {
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception ignore) {
+				}
+			}
+		}
+		String json = "";
+		//ログイン成功
+		if (udto != null) {
+			json = "0";
+		//ログイン失敗
+		} else if (udto == null) {
+			json = "1";
+		}
+		return json;
+	}
+
 	public static void main(String[] args) {
 		// TODO 自動生成されたメソッド・スタブ
 		UserDAO udao = new UserDAO();
