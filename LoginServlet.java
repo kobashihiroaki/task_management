@@ -40,12 +40,15 @@ public class LoginServlet extends HttpServlet {
 		// JSONをオブジェクトに変更
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, String> reqMap = mapper.readValue(reqJson, new TypeReference<Map<String, String>>() {});
-		Map<String, Object> resMap = new HashMap<>();
 
-//		resMap.put("login_id", "kobashi");
-//		resMap.put("login_password", "hogehoge");
-		resMap.put("login_id", reqMap.get("login_id"));
-		resMap.put("login_password", reqMap.get("login_password"));
+		String login_id = reqMap.get("login_id");
+		String login_password = reqMap.get("login_password");
+		UserDAO udao = new UserDAO();
+		UserDTO udto = udao.selectUser(login_id, login_password);
+
+		Map<String, Object> resMap = new HashMap<>();
+		resMap.put("id", udto.getId());
+		resMap.put("login_id", udto.getLogin_id());
 
 		// オブジェクトをJson文字列に変更
 		String json = mapper.writeValueAsString(resMap);
@@ -54,6 +57,6 @@ public class LoginServlet extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         out.print(json);
-//        out.flush();
+
 	}
 }
