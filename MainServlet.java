@@ -39,11 +39,10 @@ public class MainServlet extends HttpServlet {
 			// JSONをオブジェクトに変更
 			ObjectMapper mapper = new ObjectMapper();
 			Map<String, Map<String, Object>> reqMap = mapper.readValue(reqJson, new TypeReference<Map<String, Map<String, Object>>>() {});
-//			Map<String, Object> obj = reqMap.get("obj");
-//			int user_id = (int)obj.get("login_id");
-//			String title = (String)obj.get("title");
-//			String content = (String)obj.get("content");
-//
+//			int user_id = (int)reqMap.get("obj").get("login_id");
+//			String title = (String)reqMap.get("obj").get("title");
+//			String content = (String)reqMap.get("obj").get("content");
+
 //			TaskDAO tdao = new TaskDAO();
 //			Map<String, Integer> resMap = new HashMap<>();
 
