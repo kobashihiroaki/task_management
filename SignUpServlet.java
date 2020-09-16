@@ -16,17 +16,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class SignUpServlet
  */
-@WebServlet(name = "login", urlPatterns = "/login")
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "sign_up", urlPatterns = "/sign_up")
+public class SignUpServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-//	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		// TODO Auto-generated method stub
-////		response.sendRedirect("login.jsp");
-//	}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -44,11 +44,15 @@ public class LoginServlet extends HttpServlet {
 		String login_id = reqMap.get("login_id");
 		String login_password = reqMap.get("login_password");
 		UserDAO udao = new UserDAO();
-		UserDTO udto = udao.selectUser(login_id, login_password);
+		Map<String, Integer> resMap = new HashMap<>();
 
-		Map<String, Object> resMap = new HashMap<>();
-		resMap.put("id", udto.getId());
-		resMap.put("login_id", udto.getLogin_id());
+		//会員登録に成功した場合
+		if (udao.insertUser(login_id, login_password) == true) {
+			resMap.put("success", 0);
+		//会員登録に失敗した場合
+		} else {
+			resMap.put("success",  1);
+		}
 
 		// オブジェクトをJson文字列に変更
 		String json = mapper.writeValueAsString(resMap);
@@ -59,4 +63,5 @@ public class LoginServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.print(json);
 	}
+
 }
