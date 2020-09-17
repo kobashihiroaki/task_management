@@ -3,6 +3,9 @@ package task_management;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,29 +42,66 @@ public class MainServlet extends HttpServlet {
 
 			// JSONをオブジェクトに変更
 			ObjectMapper mapper = new ObjectMapper();
-			Map<String, Map<String, Object>> reqMap = mapper.readValue(reqJson, new TypeReference<Map<String, Map<String, Object>>>() {});
-//			int user_id = (int)reqMap.get("obj").get("login_id");
-//			String title = (String)reqMap.get("obj").get("title");
-//			String content = (String)reqMap.get("obj").get("content");
+			Map<String, Object> reqMap = mapper.readValue(reqJson, new TypeReference<Map<String, Object>>() {});
 
-//			TaskDAO tdao = new TaskDAO();
-//			Map<String, Integer> resMap = new HashMap<>();
+			//actionを取得
+			String action = (String)reqMap.get("action");
 
-			//タスク登録に成功した場合
-//			if (tdao.insertTask(user_id, title, content) == true) {
-//				resMap.put("success", 0);
-			//タスク登録に失敗した場合
-//			} else {
-//				resMap.put("success",  1);
-//			}
+			//actionが"select"のとき
+			if (action.equals("select")) {
+				int user_id = (int)reqMap.get("user_id");
+				TaskDAO tdao = new TaskDAO();
 
-			// オブジェクトをJson文字列に変更
-			String json = mapper.writeValueAsString(reqMap);
+				List<TaskDTO> tasks = new ArrayList<TaskDTO>();
+				tasks = tdao.selectTask(user_id);
 
-			response.setContentType("application/json; charset=utf-8");
-			request.setCharacterEncoding("utf-8");
+				ArrayList<String> json = new ArrayList<String>();
+				for (int i = 0; i < tasks.size(); i++) {
+					TaskDTO task = tasks.get(i);
 
-	        PrintWriter out = response.getWriter();
-	        out.print(json);
+			        try {
+			            //JSON文字列に変換
+			            String jsonData = mapper.writeValueAsString(task);
+			            json.add(jsonData);
+			        } catch (JsonProcessingException e) {
+			            e.printStackTrace();
+			        }
+				}
+
+				response.setContentType("application/json; charset=utf-8");
+				request.setCharacterEncoding("utf-8");
+
+		        PrintWriter out = response.getWriter();
+		        out.print(json);
+			}
+
+			//actionが"insert"のとき
+			if (action.equals("insert")) {
+				Map<String, Object> obj = (Map<String, Object>)reqMap.get("obj");
+				int user_id = (int)obj.get("user_id");
+				String title = (String)obj.get("title");
+				String content = (String)obj.get("content");
+
+				TaskDAO tdao = new TaskDAO();
+				Map<String, Integer> resMap = new HashMap<>();
+
+//				タスク登録に成功した場合
+				if (tdao.insertTask(user_id, title, content) == true) {
+					resMap.put("success", 0);
+//				タスク登録に失敗した場合
+				} else {
+					resMap.put("success",  1);
+				}
+
+				// オブジェクトをJson文字列に変更
+				String json = mapper.writeValueAsString(resMap);
+
+				response.setContentType("application/json; charset=utf-8");
+				request.setCharacterEncoding("utf-8");
+
+		        PrintWriter out = response.getWriter();
+		        out.print(json);
+			}
+
 	}
 }
