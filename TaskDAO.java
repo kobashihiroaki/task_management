@@ -84,9 +84,40 @@ public class TaskDAO {
 		}
 	}
 
-	public boolean updateTask(String title, String content, int task_id) {
+	public boolean updateTask(int task_id, String title, String content) {
 		boolean success;
-		String sql = "UPDATE tasks SET title = '" + title + "', content = '" + content + "' WHERE id = 'task_id'";
+		String sql = "UPDATE tasks SET title = '" + title + "', content = '" + content + "' WHERE id = '" + task_id + "'";
+		Connection con = null;
+		Statement smt = null;
+		try {
+			con = ConnectionManager.getConnection();
+			smt = con.createStatement();
+			smt.executeUpdate(sql);
+			success = true;
+			return success;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			success = false;
+			return success;
+		} finally {
+			if (smt != null) {
+				try {
+					smt.close();
+				} catch (Exception ignore) {
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception ignore) {
+				}
+			}
+		}
+	}
+
+	public boolean deleteTask(int task_id) {
+		boolean success;
+		String sql = "DELETE from tasks where id = '" + task_id + "'";
 		Connection con = null;
 		Statement smt = null;
 		try {

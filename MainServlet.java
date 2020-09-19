@@ -103,5 +103,59 @@ public class MainServlet extends HttpServlet {
 		        out.print(json);
 			}
 
+			//actionが"update"のとき
+			if (action.equals("update")) {
+				Map<String, Object> obj = (Map<String, Object>)reqMap.get("obj");
+				int task_id = (int)obj.get("task_id");
+				String title = (String)obj.get("title");
+				String content = (String)obj.get("content");
+
+				TaskDAO tdao = new TaskDAO();
+				Map<String, Integer> resMap = new HashMap<>();
+
+//				タスク編集に成功した場合
+				if (tdao.updateTask(task_id, title, content) == true) {
+					resMap.put("success", 0);
+//				タスク編集に失敗した場合
+				} else {
+					resMap.put("success",  1);
+				}
+
+
+				// オブジェクトをJson文字列に変更
+				String json = mapper.writeValueAsString(resMap);
+
+				response.setContentType("application/json; charset=utf-8");
+				request.setCharacterEncoding("utf-8");
+
+		        PrintWriter out = response.getWriter();
+		        out.print(json);
+			}
+
+			//actionが"update"のとき
+			if (action.equals("delete")) {
+				int task_id = (int)reqMap.get("task_id");
+				TaskDAO tdao = new TaskDAO();
+				Map<String, Integer> resMap = new HashMap<>();
+
+//				タスク削除に成功した場合
+				if (tdao.deleteTask(task_id) == true) {
+					resMap.put("success", 0);
+//				タスク削除に失敗した場合
+				} else {
+					resMap.put("success",  1);
+				}
+
+
+				// オブジェクトをJson文字列に変更
+				String json = mapper.writeValueAsString(resMap);
+
+				response.setContentType("application/json; charset=utf-8");
+				request.setCharacterEncoding("utf-8");
+
+		        PrintWriter out = response.getWriter();
+		        out.print(json);
+
+			}
 	}
 }
