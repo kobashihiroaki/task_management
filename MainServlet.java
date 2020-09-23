@@ -26,11 +26,11 @@ public class MainServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-//	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		// TODO Auto-generated method stub
-//		doPost(request, response);
-//	}
-
+/*	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request, response);
+	}
+*/
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -54,6 +54,7 @@ public class MainServlet extends HttpServlet {
 
 				List<TaskDTO> tasks = new ArrayList<TaskDTO>();
 				tasks = tdao.selectTask(user_id);
+				String aaa = mapper.writeValueAsString(tasks);
 
 				ArrayList<String> json = new ArrayList<String>();
 				for (int i = 0; i < tasks.size(); i++) {
@@ -69,10 +70,11 @@ public class MainServlet extends HttpServlet {
 				}
 
 				response.setContentType("application/json; charset=utf-8");
+//				response.setHeader("Access-Control-Allow-Origin", "*");
 				request.setCharacterEncoding("utf-8");
 
 		        PrintWriter out = response.getWriter();
-		        out.print(json);
+		        out.print(aaa);
 			}
 
 			//actionが"insert"のとき
@@ -157,5 +159,6 @@ public class MainServlet extends HttpServlet {
 		        out.print(json);
 
 			}
+
 	}
 }
